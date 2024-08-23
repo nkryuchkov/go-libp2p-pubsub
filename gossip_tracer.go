@@ -1,6 +1,7 @@
 package pubsub
 
 import (
+	"fmt"
 	"math/rand"
 	"sync"
 	"time"
@@ -91,6 +92,7 @@ func (gt *gossipTracer) GetBrokenPromises() map[peer.ID]int {
 	for mid, promises := range gt.promises {
 		for p, expire := range promises {
 			if expire.Before(now) {
+				fmt.Println("promise expired", p, now.Sub(expire))
 				if res == nil {
 					res = make(map[peer.ID]int)
 				}
