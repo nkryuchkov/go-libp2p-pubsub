@@ -263,7 +263,7 @@ func (ps *peerScore) Score(p peer.ID) float64 {
 }
 
 func (ps *peerScore) score(p peer.ID) float64 {
-	log.Info("calculating score")
+	fmt.Println("calculating score")
 
 	pstats, ok := ps.peerStats[p]
 	if !ok {
