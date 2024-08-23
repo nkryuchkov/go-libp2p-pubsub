@@ -350,7 +350,7 @@ func (ps *peerScore) score(p peer.ID) float64 {
 		score += p7 * ps.params.BehaviourPenaltyWeight
 		if score < 0 {
 			fmt.Println("negative score after p7",
-				p7, ps.params.BehaviourPenaltyThreshold, excess, pstats.behaviourPenalty)
+				score, p7*ps.params.BehaviourPenaltyWeight, p7, ps.params.BehaviourPenaltyThreshold, excess, pstats.behaviourPenalty)
 		}
 	}
 
