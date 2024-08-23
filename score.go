@@ -340,7 +340,7 @@ func (ps *peerScore) score(p peer.ID) float64 {
 	p6 := ps.ipColocationFactor(p)
 	score += p6 * ps.params.IPColocationFactorWeight
 	if score < 0 {
-		fmt.Println("negative score after p6, p")
+		fmt.Println("negative score after p6", p)
 	}
 
 	// P7: behavioural pattern penalty
@@ -349,8 +349,8 @@ func (ps *peerScore) score(p peer.ID) float64 {
 		p7 := excess * excess
 		score += p7 * ps.params.BehaviourPenaltyWeight
 		if score < 0 {
-			fmt.Println("negative score after p7, p",
-				score, p7*ps.params.BehaviourPenaltyWeight, p7, ps.params.BehaviourPenaltyThreshold, excess, pstats.behaviourPenalty)
+			fmt.Println("negative score after p7",
+				p, score, p7*ps.params.BehaviourPenaltyWeight, p7, ps.params.BehaviourPenaltyThreshold, excess, pstats.behaviourPenalty)
 		}
 	}
 
