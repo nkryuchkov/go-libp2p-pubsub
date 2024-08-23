@@ -317,7 +317,7 @@ func (ps *peerScore) score(p peer.ID) float64 {
 		// update score, mixing with topic weight
 		score += topicScore * topicParams.TopicWeight
 		if score < 0 {
-			fmt.Println("negative score after p4")
+			fmt.Println("negative score after p4", p)
 		}
 	}
 
@@ -325,7 +325,7 @@ func (ps *peerScore) score(p peer.ID) float64 {
 	if ps.params.TopicScoreCap > 0 && score > ps.params.TopicScoreCap {
 		score = ps.params.TopicScoreCap
 		if score < 0 {
-			fmt.Println("negative score after topic score cap apply")
+			fmt.Println("negative score after topic score cap apply", p)
 		}
 	}
 
@@ -333,14 +333,14 @@ func (ps *peerScore) score(p peer.ID) float64 {
 	p5 := ps.params.AppSpecificScore(p)
 	score += p5 * ps.params.AppSpecificWeight
 	if score < 0 {
-		fmt.Println("negative score after p5")
+		fmt.Println("negative score after p5", p)
 	}
 
 	// P6: IP collocation factor
 	p6 := ps.ipColocationFactor(p)
 	score += p6 * ps.params.IPColocationFactorWeight
 	if score < 0 {
-		fmt.Println("negative score after p6")
+		fmt.Println("negative score after p6, p")
 	}
 
 	// P7: behavioural pattern penalty
@@ -349,7 +349,7 @@ func (ps *peerScore) score(p peer.ID) float64 {
 		p7 := excess * excess
 		score += p7 * ps.params.BehaviourPenaltyWeight
 		if score < 0 {
-			fmt.Println("negative score after p7",
+			fmt.Println("negative score after p7, p",
 				score, p7*ps.params.BehaviourPenaltyWeight, p7, ps.params.BehaviourPenaltyThreshold, excess, pstats.behaviourPenalty)
 		}
 	}
@@ -576,6 +576,7 @@ func (ps *peerScore) refreshScores() {
 		pstats.behaviourPenalty *= ps.params.BehaviourPenaltyDecay
 		if pstats.behaviourPenalty < ps.params.DecayToZero {
 			pstats.behaviourPenalty = 0
+			fmt.Println("resetting behaviour penalty", p)
 		}
 	}
 }

@@ -829,6 +829,7 @@ func (gs *GossipSubRouter) handleGraft(p peer.ID, ctl *pb.ControlMessage) []*pb.
 		if backoff && now.Before(expire) {
 			log.Debugf("GRAFT: ignoring backed off peer %s", p)
 			// add behavioural penalty
+			fmt.Println("adding behaviour penalty [1]", p)
 			gs.score.AddPenalty(p, 1)
 			// no PX
 			doPX = false
@@ -836,6 +837,7 @@ func (gs *GossipSubRouter) handleGraft(p peer.ID, ctl *pb.ControlMessage) []*pb.
 			floodCutoff := expire.Add(gs.params.GraftFloodThreshold - gs.params.PruneBackoff)
 			if now.Before(floodCutoff) {
 				// extra penalty
+				fmt.Println("adding behaviour penalty [2]", p)
 				gs.score.AddPenalty(p, 1)
 			}
 			// refresh the backoff
@@ -1682,6 +1684,7 @@ func (gs *GossipSubRouter) clearIHaveCounters() {
 func (gs *GossipSubRouter) applyIwantPenalties() {
 	for p, count := range gs.gossipTracer.GetBrokenPromises() {
 		log.Infof("peer %s didn't follow up in %d IWANT requests; adding penalty", p, count)
+		fmt.Println("adding behaviour penalty [3]", count, p)
 		gs.score.AddPenalty(p, count)
 	}
 }
