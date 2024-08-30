@@ -363,6 +363,7 @@ loop:
 	// no async validators, accepted message, send it!
 	select {
 	case v.p.sendMsg <- msg:
+		fmt.Println("sending message from validate", peer.ID(msg.GetFrom()).String())
 		return nil
 	case <-v.p.ctx.Done():
 		return v.p.ctx.Err()
@@ -388,6 +389,7 @@ func (v *validation) doValidateTopic(vals []*validatorImpl, src peer.ID, msg *Me
 
 	switch result {
 	case ValidationAccept:
+		fmt.Println("sending message from doValidateTopic", peer.ID(msg.GetFrom()).String())
 		v.p.sendMsg <- msg
 	case ValidationReject:
 		log.Debugf("message validation failed; dropping message from %s", src)
