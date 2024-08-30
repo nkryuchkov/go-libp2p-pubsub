@@ -257,12 +257,10 @@ func (t *Topic) Publish(ctx context.Context, data []byte, opts ...PubOpt) error 
 	}
 	if pid != "" {
 		m.From = []byte(pid)
-		fmt.Println("publishing message from [1]", peer.ID(m.GetFrom()).String())
 		m.Seqno = t.p.nextSeqno()
 	}
 	if key != nil {
 		m.From = []byte(pid)
-		fmt.Println("publishing message from [2]", peer.ID(m.GetFrom()).String())
 		err := signMessage(pid, key, m)
 		if err != nil {
 			return err
