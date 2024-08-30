@@ -1100,6 +1100,7 @@ func (p *PubSub) handleIncomingRPC(rpc *RPC) {
 				continue
 			}
 
+			fmt.Println("handleIncomingRPC AcceptAll", peer.ID(pmsg.GetFrom()).String())
 			p.pushMsg(&Message{pmsg, "", rpc.from, nil, false})
 		}
 	}
@@ -1155,6 +1156,7 @@ func (p *PubSub) pushMsg(msg *Message) {
 		return
 	}
 
+	fmt.Println("pushMsg", peer.ID(msg.GetFrom()).String())
 	if !p.val.Push(src, msg) {
 		return
 	}

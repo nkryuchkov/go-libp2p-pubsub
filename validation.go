@@ -238,6 +238,7 @@ func (v *validation) PushLocal(msg *Message) error {
 	}
 
 	vals := v.getValidators(msg)
+	fmt.Println("PushLocal going to validate message", peer.ID(msg.GetFrom()).String())
 	return v.validate(vals, msg.ReceivedFrom, msg, true)
 }
 
@@ -249,6 +250,7 @@ func (v *validation) Push(src peer.ID, msg *Message) bool {
 	if len(vals) > 0 || msg.Signature != nil {
 		select {
 		case v.validateQ <- &validateReq{vals, src, msg}:
+			fmt.Println("Push message to validateQ", peer.ID(msg.GetFrom()).String())
 		default:
 			log.Debugf("message validation throttled: queue full; dropping message from %s", src)
 			v.tracer.RejectMessage(msg, RejectValidationQueueFull)
@@ -282,6 +284,7 @@ func (v *validation) validateWorker() {
 	for {
 		select {
 		case req := <-v.validateQ:
+			fmt.Println("validateWorker going to validate message", peer.ID(req.msg.GetFrom()).String())
 			v.validate(req.vals, req.src, req.msg, false)
 		case <-v.p.ctx.Done():
 			return
