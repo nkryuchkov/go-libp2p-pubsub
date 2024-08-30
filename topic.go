@@ -310,7 +310,7 @@ func (t *Topic) Publish(ctx context.Context, data []byte, opts ...PubOpt) error 
 		}
 	}
 
-	fmt.Println("Publish going to PushLocal", peer.ID(req.msg.GetFrom()).String())
+	fmt.Println("Publish going to PushLocal", peer.ID(m.GetFrom()).String())
 	return t.p.val.PushLocal(&Message{m, "", t.p.host.ID(), nil, pub.local})
 }
 
