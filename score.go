@@ -770,6 +770,7 @@ func (ps *peerScore) RejectMessage(msg *Message, reason string) {
 	case RejectUnexpectedAuthInfo:
 		fallthrough
 	case RejectSelfOrigin:
+		fmt.Println("RejectMessage: invalid message delivery: RejectSelfOrigin")
 		ps.markInvalidMessageDelivery(msg.ReceivedFrom, msg)
 		return
 
@@ -813,8 +814,10 @@ func (ps *peerScore) RejectMessage(msg *Message, reason string) {
 	// mark the message as invalid and penalize peers that have already forwarded it.
 	drec.status = deliveryInvalid
 
+	fmt.Println("RejectMessage: invalid message delivery: deliveryInvalid")
 	ps.markInvalidMessageDelivery(msg.ReceivedFrom, msg)
 	for p := range drec.peers {
+		fmt.Println("RejectMessage: invalid message delivery: deliveryInvalid", p)
 		ps.markInvalidMessageDelivery(p, msg)
 	}
 
@@ -847,6 +850,7 @@ func (ps *peerScore) DuplicateMessage(msg *Message) {
 
 	case deliveryInvalid:
 		// we no longer track delivery time
+		fmt.Println("DuplicateMessage: invalid message delivery: deliveryInvalid")
 		ps.markInvalidMessageDelivery(msg.ReceivedFrom, msg)
 
 	case deliveryThrottled:
