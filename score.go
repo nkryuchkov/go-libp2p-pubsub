@@ -289,11 +289,17 @@ func (ps *peerScore) score(p peer.ID) float64 {
 				p1 = topicParams.TimeInMeshCap
 			}
 			topicScore += p1 * topicParams.TimeInMeshWeight
+			if p1*topicParams.TimeInMeshWeight < 0 {
+				fmt.Println("negative score p1", p, p1*topicParams.TimeInMeshWeight)
+			}
 		}
 
 		// P2: first message deliveries
 		p2 := tstats.firstMessageDeliveries
 		topicScore += p2 * topicParams.FirstMessageDeliveriesWeight
+		if p2*topicParams.FirstMessageDeliveriesWeight < 0 {
+			fmt.Println("negative score p2", p, p2*topicParams.FirstMessageDeliveriesWeight)
+		}
 
 		// P3: mesh message deliveries
 		if tstats.meshMessageDeliveriesActive {
@@ -301,6 +307,9 @@ func (ps *peerScore) score(p peer.ID) float64 {
 				deficit := topicParams.MeshMessageDeliveriesThreshold - tstats.meshMessageDeliveries
 				p3 := deficit * deficit
 				topicScore += p3 * topicParams.MeshMessageDeliveriesWeight
+				if p3*topicParams.MeshMessageDeliveriesWeight < 0 {
+					fmt.Println("negative score p3", p, p3*topicParams.MeshMessageDeliveriesWeight)
+				}
 			}
 		}
 
@@ -308,34 +317,55 @@ func (ps *peerScore) score(p peer.ID) float64 {
 		// NOTE: the weight of P3b is negative (validated in TopicScoreParams.validate), so this detracts.
 		p3b := tstats.meshFailurePenalty
 		topicScore += p3b * topicParams.MeshFailurePenaltyWeight
+		if p3b*topicParams.MeshFailurePenaltyWeight < 0 {
+			fmt.Println("negative score p3b", p, p3b*topicParams.MeshFailurePenaltyWeight)
+		}
 
 		// P4: invalid messages
 		// NOTE: the weight of P4 is negative (validated in TopicScoreParams.validate), so this detracts.
 		p4 := (tstats.invalidMessageDeliveries * tstats.invalidMessageDeliveries)
 		topicScore += p4 * topicParams.InvalidMessageDeliveriesWeight
+		if p4*topicParams.InvalidMessageDeliveriesWeight < 0 {
+			fmt.Println("negative score p4", p, p4*topicParams.InvalidMessageDeliveriesWeight)
+		}
 
 		// update score, mixing with topic weight
 		score += topicScore * topicParams.TopicWeight
+		if topicScore*topicParams.TopicWeight < 0 {
+			fmt.Println("negative score after p4", p, topicScore*topicParams.TopicWeight)
+		}
 	}
 
 	// apply the topic score cap, if any
 	if ps.params.TopicScoreCap > 0 && score > ps.params.TopicScoreCap {
 		score = ps.params.TopicScoreCap
+		if ps.params.TopicScoreCap < 0 {
+			fmt.Println("negative score after topic score cap apply", p, ps.params.TopicScoreCap)
+		}
 	}
 
 	// P5: application-specific score
 	p5 := ps.params.AppSpecificScore(p)
 	score += p5 * ps.params.AppSpecificWeight
+	if p5*ps.params.AppSpecificWeight < 0 {
+		fmt.Println("negative score p5", p, p5*ps.params.AppSpecificWeight)
+	}
 
 	// P6: IP collocation factor
 	p6 := ps.ipColocationFactor(p)
 	score += p6 * ps.params.IPColocationFactorWeight
+	if p6*ps.params.IPColocationFactorWeight < 0 {
+		fmt.Println("negative score p6", p, p6*ps.params.IPColocationFactorWeight)
+	}
 
 	// P7: behavioural pattern penalty
 	if pstats.behaviourPenalty > ps.params.BehaviourPenaltyThreshold {
 		excess := pstats.behaviourPenalty - ps.params.BehaviourPenaltyThreshold
 		p7 := excess * excess
 		score += p7 * ps.params.BehaviourPenaltyWeight
+		if p7*ps.params.BehaviourPenaltyWeight < 0 {
+			fmt.Println("negative score p7", p, p7*ps.params.BehaviourPenaltyWeight)
+		}
 	}
 
 	return score
