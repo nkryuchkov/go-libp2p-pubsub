@@ -770,7 +770,10 @@ func (ps *peerScore) RejectMessage(msg *Message, reason string) {
 	case RejectUnexpectedAuthInfo:
 		fallthrough
 	case RejectSelfOrigin:
-		fmt.Println("RejectMessage: invalid message delivery: RejectSelfOrigin")
+		fmt.Println("RejectMessage: invalid message delivery: RejectSelfOrigin",
+			msg.GetFrom().String(),
+			ps.host.ID().String(),
+		)
 		ps.markInvalidMessageDelivery(msg.ReceivedFrom, msg)
 		return
 
