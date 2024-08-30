@@ -1141,6 +1141,10 @@ func (p *PubSub) pushMsg(msg *Message) {
 	self := p.host.ID()
 	if peer.ID(msg.GetFrom()) == self && src != self {
 		log.Debugf("dropping message claiming to be from self but forwarded from %s", src)
+		fmt.Println("rejecting self originated message",
+			msg.GetFrom().String(),
+			src.String(),
+		)
 		p.tracer.RejectMessage(msg, RejectSelfOrigin)
 		return
 	}
