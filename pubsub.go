@@ -295,6 +295,8 @@ func NewPubSub(ctx context.Context, h host.Host, rt PubSubRouter, opts ...Option
 		counter:               uint64(time.Now().UnixNano()),
 	}
 
+	fmt.Println("NewPubSub sign ID", ps.signID.String())
+
 	for _, opt := range opts {
 		err := opt(ps)
 		if err != nil {
@@ -410,6 +412,7 @@ func WithMessageAuthor(author peer.ID) Option {
 		if author == "" {
 			author = p.host.ID()
 		}
+		fmt.Println("WithMessageAuthor", author.String())
 		p.signID = author
 		return nil
 	}
