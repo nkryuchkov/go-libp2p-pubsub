@@ -1020,6 +1020,8 @@ func (gs *GossipSubRouter) connector() {
 }
 
 func (gs *GossipSubRouter) Publish(msg *Message) {
+	fmt.Println("GossipSubRouter: going to publish message from", msg.GetFrom().String())
+
 	gs.mcache.Put(msg)
 
 	from := msg.ReceivedFrom
@@ -1084,9 +1086,11 @@ func (gs *GossipSubRouter) Publish(msg *Message) {
 	out := rpcWithMessages(msg.Message)
 	for pid := range tosend {
 		if pid == from || pid == peer.ID(msg.GetFrom()) {
+			fmt.Println("GossipSubRouter: filtering out message from", msg.GetFrom().String())
 			continue
 		}
 
+		fmt.Println("GossipSubRouter: sent message from", msg.GetFrom().String())
 		gs.sendRPC(pid, out)
 	}
 }
