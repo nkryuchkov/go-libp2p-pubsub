@@ -1086,11 +1086,11 @@ func (gs *GossipSubRouter) Publish(msg *Message) {
 	out := rpcWithMessages(msg.Message)
 	for pid := range tosend {
 		if pid == from || pid == peer.ID(msg.GetFrom()) {
-			fmt.Println("GossipSubRouter: filtering out message from", msg.GetFrom().String())
+			fmt.Println("GossipSubRouter: filtering out message from", msg.GetFrom().String(), " to ", pid.String())
 			continue
 		}
 
-		fmt.Println("GossipSubRouter: sent message from", msg.GetFrom().String())
+		fmt.Println("GossipSubRouter: sent message from", msg.GetFrom().String(), " to ", pid.String())
 		gs.sendRPC(pid, out)
 	}
 }
