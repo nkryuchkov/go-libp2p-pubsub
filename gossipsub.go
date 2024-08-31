@@ -671,6 +671,9 @@ func (gs *GossipSubRouter) HandleRPC(rpc *RPC) {
 	}
 
 	out := rpcWithControl(ihave, nil, iwant, nil, prune)
+	for _, msg := range out.Publish {
+		fmt.Println("HandleRPC sending RPC to ", rpc.from.String(), " from ", peer.ID(msg.GetFrom()).String())
+	}
 	gs.sendRPC(rpc.from, out)
 }
 
